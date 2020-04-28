@@ -31,6 +31,8 @@ fi
 # branch is coverity_scan
 echo "Running coverity build"
 
+set -x
+
 # Do coverity steps
 # We want to limit this to just one build, so we don't run with:
 # - CC as clang (limit to GCC builds
@@ -43,8 +45,8 @@ fi
 
 # ensure coverity_scan tool is available to the container
 if [ ! -f "$(pwd)/coverity-analysis/bin/cov-build" ]; then
-  wget https://scan.coverity.com/download/linux64 --quiet --post-data "token=$COVERITY_SCAN_TOKEN&project=tpm2-software%2Ftpm2.0-tss" -O coverity_tool.tgz
-  wget https://scan.coverity.com/download/linux64 --quiet --post-data "token=$COVERITY_SCAN_TOKEN&project=tpm2-software%2Ftpm2.0-tss&md5=1" -O coverity_tool.md5
+  wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=tpm2-software%2Ftpm2.0-tss" -O coverity_tool.tgz
+  wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=tpm2-software%2Ftpm2.0-tss&md5=1" -O coverity_tool.md5
   echo "$(cat coverity_tool.md5)" coverity_tool.tgz | md5sum -c
 fi
 
