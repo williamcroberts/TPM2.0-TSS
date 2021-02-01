@@ -1606,39 +1606,3 @@ iesys_hash_long_auth_values(
     }
     return r;
 }
-
-/** Adapt sensitive data for long auth values.
- *
- * If the size of the auth value exceeds the the size of the
- * name alg hash a hash of this auth value will be stored
- * in the sensitive data which is used for object creation.
- *
- * @param[in,out] in_sensitive The sensitive data with the auth value
- *                to be adapted.
- * @param[in] name_hash_alg The name alg of the object whose sensitive
- *            data will be adapted.
- * @retval TSS2_RC_SUCCESS if the function call was a success.
- * @retval TSS2_ESYS_RC_MEMORY if the ESAPI cannot allocate enough memory.
- * @retval TSS2_ESYS_RC_BAD_VALUE if an invalid hash is passed.
- * @retval TSS2_ESYS_RC_GENERAL_FAILURE for a failure during digest
- *         computation.
- */
-TSS2_RC
-iesys_adapt_sensitive_to_long_auth_values(
-    TPM2B_SENSITIVE_CREATE *in_sensitive,
-    TPMI_ALG_HASH name_hash_alg)
-{
-    TSS2_RC r;
-    size_t hash_size;
-
-    r = iesys_crypto_hash_get_digest_size(name_hash_alg, &hash_size);
-    return_if_error(r, "Get digest size.");
-
-    if (in_sensitive->sensitive.userAuth.size > hash_size) {
-        /* The auth value has to be adapted. */
-        r = iesys_hash_long_auth_values(&in_sensitive->sensitive.userAuth,
-                                        name_hash_alg);
-        return_if_error(r, "Adapt long auth values");
-    }
-    return r;
-}

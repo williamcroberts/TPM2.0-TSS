@@ -381,7 +381,7 @@ Esys_TR_SetAuth(ESYS_CONTEXT * esys_context, ESYS_TR esys_handle,
 {
     RSRC_NODE_T *esys_object;
     TSS2_RC r;
-    TPMI_ALG_HASH name_alg;
+    TPMI_ALG_HASH name_alg = TPM2_ALG_NULL;
 
     _ESYS_ASSERT_NON_NULL(esys_context);
     r = esys_GetResourceObject(esys_context, esys_handle, &esys_object);
@@ -399,14 +399,12 @@ Esys_TR_SetAuth(ESYS_CONTEXT * esys_context, ESYS_TR esys_handle,
             name_alg = esys_object->rsrc.misc.rsrc_key_pub.publicArea.nameAlg;
         } else if (esys_object->rsrc.rsrcType == IESYSC_NV_RSRC) {
             name_alg = esys_object->rsrc.misc.rsrc_nv_pub.nvPublic.nameAlg;
-        } else {
-            name_alg = TPM2_ALG_NULL;
         }
         esys_object->auth = *authValue;
         /* Adapt auth value to hash for large auth values. */
         if (name_alg != TPM2_ALG_NULL) {
             r = iesys_hash_long_auth_values(&esys_object->auth, name_alg);
-            return_if_error(r, "Adaption of out value failed.");
+            return_if_error(r, "Hashing overlength authValue failed.");
         }
     }
     return TSS2_RC_SUCCESS;

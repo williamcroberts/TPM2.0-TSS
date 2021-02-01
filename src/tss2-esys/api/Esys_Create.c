@@ -206,8 +206,9 @@ Esys_Create_Async(
 
     store_input_parameters (esysContext, inSensitive);
     if (inPublic) {
-        r = iesys_adapt_sensitive_to_long_auth_values(esysContext->in.Create.inSensitive,
-                                                      inPublic->publicArea.nameAlg);
+        r = iesys_hash_long_auth_values(
+           &esysContext->in.Create.inSensitive->sensitive.userAuth,
+            inPublic->publicArea.nameAlg);
         return_state_if_error(r, _ESYS_STATE_INIT, "Adapt auth value.");
     }
 

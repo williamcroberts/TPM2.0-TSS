@@ -171,10 +171,6 @@ TSS2_RC iesys_hash_long_auth_values(
     TPM2B_AUTH *auth_value,
     TPMI_ALG_HASH hash_alg);
 
-TSS2_RC iesys_adapt_sensitive_to_long_auth_values(
-    TPM2B_SENSITIVE_CREATE *in_sensitive,
-    TPMI_ALG_HASH name_hash_alg);
-
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
